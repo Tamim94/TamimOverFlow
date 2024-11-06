@@ -5,6 +5,7 @@ interface DecodeToken extends JwtPayload {
   id: string;
   role: string;
 }
+
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.headers.authorization;
@@ -39,8 +40,30 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const verifyAdmin = (req: Request, res: Response, next: NextFunction) => {
+  if (req.userRole !== 'admin') {
+    return res.status(403).json({
+      status: 403,
+      message: 'Forbidden',
+    });
+  }
+  next();
+};
+
+const verifyAdminOrOwner = (req: Request, res: Response, next: NextFunction) => {
+  if (req.userRole !== 'admin' && req.userId !== req.params.id && req.userId !== req.body.createdBy) {
+    return res.status(403).json({
+      status: 403,
+      message: 'Forbidden',
+    });
+  }
+  next();
+};
+
 const authJwt = {
   verifyToken,
+  verifyAdmin,
+  verifyAdminOrOwner,
 };
 
 export default authJwt;

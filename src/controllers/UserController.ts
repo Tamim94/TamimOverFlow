@@ -106,4 +106,93 @@ export class UserController {
       }
     }
   }
+
+  async updateUser(request: Request, response: Response): Promise<void> {
+    try {
+      const { id } = request.params;
+      const userData = request.body;
+
+      const userResponse = await this.usersService.updateUser(id, userData);
+
+      response.status(userResponse.status).send({
+        ...userResponse,
+      });
+    } catch (error) {
+      response.status(500).json({
+        status: 500,
+        message: 'Internal server error',
+        data: error
+      });
+    }
+  }
+
+  async updateConnectedUser(request: Request, response: Response): Promise<void> {
+    try {
+      const userId = request.userId;
+      if (!userId) {
+        response.status(400).json({
+          status: 400,
+          message: 'User ID is required',
+        });
+        return;
+      }
+      const userData = request.body;
+
+      const userResponse = await this.usersService.updateUser(userId, userData);
+
+      response.status(userResponse.status).send({
+        ...userResponse,
+      });
+    } catch (error) {
+      response.status(500).json({
+        status: 500,
+        message: 'Internal server error',
+        data: error
+      });
+    }
+  }
+
+  async deleteUser(request: Request, response: Response): Promise<void> {
+    try {
+      const { id } = request.params;
+
+      const userResponse = await this.usersService.deleteUser(id);
+
+      response.status(userResponse.status).send({
+        ...userResponse,
+      });
+    } catch (error) {
+      response.status(500).json({
+        status: 500,
+        message: 'Internal server error',
+        data: error
+      });
+    }
+  }
+
+  async changePassword(request: Request, response: Response): Promise<void> {
+    try {
+      const userId = request.userId;
+      if (!userId) {
+        response.status(400).json({
+          status: 400,
+          message: 'User ID is required',
+        });
+        return;
+      }
+      const { newPassword } = request.body;
+
+      const userResponse = await this.usersService.changePassword(userId, newPassword);
+
+      response.status(userResponse.status).send({
+        ...userResponse,
+      });
+    } catch (error) {
+      response.status(500).json({
+        status: 500,
+        message: 'Internal server error',
+        data: error
+      });
+    }
+  }
 }

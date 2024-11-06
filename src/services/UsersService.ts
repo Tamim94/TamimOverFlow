@@ -2,7 +2,7 @@ import { User } from '../types/entities/User';
 import { FirestoreCollections } from '../types/firestore';
 import { IResBody } from '../types/api';
 import { firestoreTimestamp } from '../utils/firestore-helpers';
-import {comparePasswords, encryptPassword} from '../utils/password';
+import { comparePasswords, encryptPassword } from '../utils/password';
 import { formatUserData } from '../utils/formatData';
 import { generateToken } from '../utils/jwt';
 import { RedisClientType } from 'redis';
@@ -113,7 +113,6 @@ export class UsersService {
   }
 
   async getUserById(userId: string): Promise<IResBody> {
-
     const userDoc = await this.db.users.doc(userId).get();
     const formattedUser = formatUserData(userDoc.data());
 
@@ -124,6 +123,42 @@ export class UsersService {
         id: userId,
         ...formattedUser
       }
+    };
+  }
+
+  async updateUser(userId: string, userData: Partial<User>): Promise<IResBody> {
+    const userRef = this.db.users.doc(userId);
+    await userRef.update({
+      ...userData,
+      updatedAt: firestoreTimestamp.now(),
+    });
+
+    return {
+      status: 200,
+      message: 'User updated successfully!',
+    };
+  }
+
+  async deleteUser(userId: string): Promise<IResBody> {
+    const userRef = this.db.users.doc(userId);
+    await userRef.delete();
+
+    return {
+      status: 200,
+      message: 'User deleted successfully!',
+    };
+  }
+
+  async changePassword(userId: string, newPassword: string): Promise<IResBody> {
+    const userRef = this.db.users.doc(userId);
+    await userRef.update({
+      password: encryptPassword(newPassword),
+      updatedAt: firestoreTimestamp.now(),
+    });
+
+    return {
+      status: 200,
+      message: 'Password changed successfully!',
     };
   }
 }

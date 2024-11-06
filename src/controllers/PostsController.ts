@@ -60,12 +60,110 @@ export class PostsController {
     }
   }
 
-  async getCategories(request: Request, response: Response): Promise<void> {
+  async getPostById(request: Request, response: Response): Promise<void> {
     try {
-      const categoriesResponse = await this.postsService.getCategories();
+      const { id } = request.params;
+      const postResponse = await this.postsService.getPostById(id);
 
-      response.status(categoriesResponse.status).send({
-        ...categoriesResponse,
+      response.status(postResponse.status).send({
+        ...postResponse,
+      });
+    } catch (error) {
+      response.status(500).json({
+        status: 500,
+        message: 'Internal server error',
+        data: error
+      });
+    }
+  }
+
+  async updatePost(request: Request, response: Response): Promise<void> {
+    try {
+      const { id } = request.params;
+      const postData = request.body;
+
+      const postResponse = await this.postsService.updatePost(id, postData);
+
+      response.status(postResponse.status).send({
+        ...postResponse,
+      });
+    } catch (error) {
+      response.status(500).json({
+        status: 500,
+        message: 'Internal server error',
+        data: error
+      });
+    }
+  }
+
+  async deletePost(request: Request, response: Response): Promise<void> {
+    try {
+      const { id } = request.params;
+
+      const postResponse = await this.postsService.deletePost(id);
+
+      response.status(postResponse.status).send({
+        ...postResponse,
+      });
+    } catch (error) {
+      response.status(500).json({
+        status: 500,
+        message: 'Internal server error',
+        data: error
+      });
+    }
+  }
+
+  async getPostsByUser(request: Request, response: Response): Promise<void> {
+    try {
+      const { userId } = request.params;
+      const postsResponse = await this.postsService.getPostsByUser(userId);
+
+      response.status(postsResponse.status).send({
+        ...postsResponse,
+      });
+    } catch (error) {
+      response.status(500).json({
+        status: 500,
+        message: 'Internal server error',
+        data: error
+      });
+    }
+  }
+
+  async getPostsByCategory(request: Request, response: Response): Promise<void> {
+    try {
+      const { category } = request.query;
+      const postsResponse = await this.postsService.getPostsByCategory(category as string);
+
+      response.status(postsResponse.status).send({
+        ...postsResponse,
+      });
+    } catch (error) {
+      response.status(500).json({
+        status: 500,
+        message: 'Internal server error',
+        data: error
+      });
+    }
+  }
+  async votePost(request: Request, response: Response): Promise<void> {
+    try {
+      const { id } = request.params;
+      const { voteType } = request.body; // 'upvote' or 'downvote'
+
+      if (!request.userId) {
+        response.status(400).json({
+          status: 400,
+          message: 'User ID is required.',
+        });
+        return;
+      }
+
+      const voteResponse = await this.postsService.votePost(id, request.userId, voteType);
+
+      response.status(voteResponse.status).send({
+        ...voteResponse,
       });
     } catch (error) {
       response.status(500).json({
@@ -76,3 +174,5 @@ export class PostsController {
     }
   }
 }
+
+

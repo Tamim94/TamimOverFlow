@@ -30,3 +30,12 @@ export const validateCreatePost = [
     )
     .withMessage('All categories must be strings'),
 ];
+
+
+export const validateCreateComment = [
+  body('content')
+    .notEmpty()
+    .withMessage('Content is required')
+    .isString()
+    .withMessage('Content must be a string'),
+];
