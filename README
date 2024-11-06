@@ -1,7 +1,12 @@
-```markdown
+
+
+---
+
 # TamimOverFlow - Backend API
 
-This project provides a backend API built with Node.js and Express for managing users, posts, and comments. It leverages Firebase Firestore for data persistence and Redis for caching.  It supports functionalities like creating users, posting content, commenting, and upvoting/downvoting posts and comments.
+This project provides a backend API built with **Node.js** and **Express** for managing users, posts, and comments. It leverages **Firebase Firestore** for data persistence and **Redis** for caching. The API supports functionalities like creating users, posting content, commenting, and upvoting/downvoting posts and comments.
+
+---
 
 ## Table of Contents
 
@@ -22,161 +27,184 @@ This project provides a backend API built with Node.js and Express for managing 
 - [Contributing](#contributing)
 - [License](#license)
 
+---
 
 ## Features
 
-- **User Management:** Create, retrieve, update, and delete users.  Includes user authentication (login) and password management.
+- **User Management:** Create, retrieve, update, and delete users. Includes user authentication (login) and password management.
 - **Post Management:** Create, retrieve, update, and delete posts. Posts can belong to different categories.
 - **Comment Management:** Add, retrieve, update, and delete comments on posts.
 - **Voting:** Upvote and downvote posts and comments.
 - **Caching:** Uses Redis to cache user data for improved performance.
 - **Data Validation:** Input validation using express-validator.
 - **Authentication:** JWT-based authentication for secure API access.
-- **Role-Based Authorization:**  Differentiates between 'admin' and 'member' roles with appropriate access control.
+- **Role-Based Authorization:** Differentiates between 'admin' and 'member' roles with appropriate access control.
 
+---
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js and npm (or yarn) installed.
-- Firebase account and project set up. (We are using the teacher firestore so forget about this unless you want to use your own firestore)
-- Redis server running. (So if you are on Windows and don't have prepare to have WSL because it requires a linux environment ) idk about MACOS sorry.
-
+- **Node.js** and **npm** (or **yarn**) installed.
+- **Firebase** account and project set up. *(Using the teacher's Firestore by default.)*
+- **Redis** server running. *(On Windows, Redis requires WSL for a Linux environment; macOS may require additional setup.)*
 
 ### Installation
 
-1. Clone the repository: `git clone https://github.com/Tamim94/TamimOverFlow.git`
-2. Navigate to the project directory: `cd TamimOverFlow`
-3. Install dependencies: `npm install`
-3. sudo service redis-server start and then redis-cli to check if the server is running if skip this on windows or macos you will get an error when you run the nodejs server
-4. Start the development server: `npm run dev`
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Tamim94/TamimOverFlow.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd TamimOverFlow
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Start Redis server:
+   ```bash
+   sudo service redis-server start
+   ```
+   *Run `redis-cli` to confirm it’s running. Skip this step on Windows or macOS if Redis isn’t installed.*
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
 ### Configuration
 
-1. **Environment Variables[If you dont have the teacher .env but get the API KEY from him huh ]:** Create a `.env` file in the root directory and add the following environment variables:
-
-```
-PORT=<port-number>
-ALLOWED_ORIGIN=<allowed-origin>
-GCP_PROJECT_ID=<your-gcp-project-id>
-GCP_CLIENT_EMAIL=<your-gcp-client-email>
-GCP_PRIVATE_KEY=<your-gcp-private-key>
-FIRESTORE_DATABASE_ID=<your-firestore-database-id>
-SECRET_KEY=<your-secret-key>
-ADMIN_EMAIL=<admin-email> (optional)
-ADMIN_USERNAME=<admin-username> (optional)
-ADMIN_PASSWORD=<admin-password> (optional)
-
-
-```
-
-2. **Firebase Setup:** (skip it we are using the teacher firestore)
-   - Download your Firebase service account key (JSON file) and place it in a secure location.  The path to this file is specified in the `GCP_PRIVATE_KEY` environment variable. Ensure the Firebase Admin SDK is properly configured.
+1. **Environment Variables:** Create a `.env` file in the root directory and add the following environment variables:
+   ```env
+   PORT=<port-number>
+   ALLOWED_ORIGIN=<allowed-origin>
+   GCP_PROJECT_ID=<your-gcp-project-id>
+   GCP_CLIENT_EMAIL=<your-gcp-client-email>
+   GCP_PRIVATE_KEY=<your-gcp-private-key>
+   FIRESTORE_DATABASE_ID=<your-firestore-database-id>
+   SECRET_KEY=<your-secret-key>
+   ADMIN_EMAIL=<admin-email> # optional
+   ADMIN_USERNAME=<admin-username> # optional
+   ADMIN_PASSWORD=<admin-password> # optional
+   ```
+2. **Firebase Setup:** *(Skip if using the teacher's Firestore)*
+   - Download your Firebase service account key (JSON file) and securely store it. The path to this file is specified in the `GCP_PRIVATE_KEY` environment variable.
 
 3. **Redis Setup:**
-   - Ensure you have a Redis server running locally or remotely.  The connection details are currently hardcoded in `src/utils/redis-client.ts`, you might want to externalize these to environment variables for flexibility.
+   - Ensure you have a Redis server running locally or remotely. *The connection details are currently hardcoded in `src/utils/redis-client.ts`; you may want to move them to environment variables.*
 
+---
 
 ## API Endpoints
-By the way remember to put http/localhost:8080/ or whatever you put in the env settings before the endpoints!!!!
+
+*Remember to prefix each endpoint with `http://localhost:<port>` or the URL in your `.env`.*
 
 ### Users
 
-| Method | Endpoint              | Description                                   | Access Level |
-| ------ | --------------------- | --------------------------------------------- | ------------- |
-| POST    | `/users`              | Create a new user.                            | Public       |
-| GET     | `/users`              | Retrieve all users (formatted data).        | Authenticated |
-| GET     | `/users/:id`          | Retrieve a user by ID (formatted data).      | Authenticated |
-| POST    | `/auth/login`        | User login.                                   | Public       |
-| PUT     | `/users/:id`          | Update a user by ID.                           | Admin Only    |
-| PUT     | `/users/me`           | Update the currently authenticated user.     | Authenticated |
-| DELETE  | `/users/:id`          | Delete a user by ID.                           | Admin Only    |
-| PATCH   | `/users/password`     | Change the password of the authenticated user. | Authenticated |
-
+| Method | Endpoint         | Description                            | Access Level   |
+| ------ | ---------------- | -------------------------------------- | -------------- |
+| POST   | `/users`         | Create a new user                      | Public         |
+| GET    | `/users`         | Retrieve all users                     | Authenticated  |
+| GET    | `/users/:id`     | Retrieve a user by ID                  | Authenticated  |
+| POST   | `/auth/login`    | User login                             | Public         |
+| PUT    | `/users/:id`     | Update a user by ID                    | Admin Only     |
+| PUT    | `/users/me`      | Update the authenticated user          | Authenticated  |
+| DELETE | `/users/:id`     | Delete a user by ID                    | Admin Only     |
+| PATCH  | `/users/password`| Change the password of the user        | Authenticated  |
 
 ### Posts
 
-| Method | Endpoint                | Description                                       | Access Level |
-| ------ | ----------------------- | ------------------------------------------------- | ------------- |
-| POST    | `/posts`                | Create a new post.                                | Authenticated |
-| GET     | `/posts`                | Retrieve all posts.                               | Public       |
-| GET     | `/posts/:id`            | Retrieve a post by ID.                             | Public       |
-| PUT     | `/posts/:id`            | Update a post by ID.                               | Admin/Owner   |
-| DELETE  | `/posts/:id`            | Delete a post by ID.                               | Admin/Owner   |
-| GET     | `/users/:userId/posts` | Retrieve posts by user ID.                       | Public       |
-| GET     | `/posts`                  | Retrieve posts by a category (query parameter)     | Public        |
-| POST    | `/posts/:id/vote`      | Upvote or downvote a post.                        | Authenticated |
-
+| Method | Endpoint               | Description                        | Access Level   |
+| ------ | ---------------------- | ---------------------------------- | -------------- |
+| POST   | `/posts`               | Create a new post                  | Authenticated  |
+| GET    | `/posts`               | Retrieve all posts                 | Public         |
+| GET    | `/posts/:id`           | Retrieve a post by ID              | Public         |
+| PUT    | `/posts/:id`           | Update a post by ID                | Admin/Owner    |
+| DELETE | `/posts/:id`           | Delete a post by ID                | Admin/Owner    |
+| GET    | `/users/:userId/posts` | Retrieve posts by user ID          | Public         |
+| GET    | `/posts`               | Retrieve posts by category         | Public         |
+| POST   | `/posts/:id/vote`      | Upvote or downvote a post          | Authenticated  |
 
 ### Comments
 
-| Method | Endpoint                    | Description                                           | Access Level |
-| ------ | --------------------------- | ----------------------------------------------------- | ------------- |
-| GET     | `/posts/:postId/comments` | Retrieve comments for a specific post.             | Public       |
-| GET     | `/comments/:id`            | Retrieve a comment by ID.                           | Public       |
-| POST    | `/posts/:postId/comments` | Add a comment to a post.                            | Authenticated |
-| PUT     | `/comments/:id`            | Update a comment by ID.                               | Admin/Owner   |
-| DELETE  | `/comments/:id`            | Delete a comment by ID.                               | Admin/Owner   |
-| POST    | `/comments/:id/vote`       | Upvote or downvote a comment.                      | Authenticated |
+| Method | Endpoint                     | Description                        | Access Level   |
+| ------ | ---------------------------- | ---------------------------------- | -------------- |
+| GET    | `/posts/:postId/comments`    | Retrieve comments for a post       | Public         |
+| GET    | `/comments/:id`              | Retrieve a comment by ID           | Public         |
+| POST   | `/posts/:postId/comments`    | Add a comment to a post            | Authenticated  |
+| PUT    | `/comments/:id`              | Update a comment by ID             | Admin/Owner    |
+| DELETE | `/comments/:id`              | Delete a comment by ID             | Admin/Owner    |
+| POST   | `/comments/:id/vote`         | Upvote or downvote a comment       | Authenticated  |
 
+---
 
 ## Authentication
 
-- Uses JSON Web Tokens (JWT) for authentication.
-- The `Authorization` header with a `Bearer` token is required for protected endpoints.
-  Example: `Authorization: Bearer <your-jwt-token>`
+- JSON Web Tokens (JWT) are used for authentication.
+- Include the token in the `Authorization` header for protected endpoints:
+  ```plaintext
+  Authorization: Bearer <your-jwt-token>
+  ```
+
+---
 
 ## Data Validation
 
-- Input data is validated using the `express-validator` library. See `src/middlewares/dataValidator.ts` for the validation rules.
+- Input validation is handled by `express-validator`. See `src/middlewares/dataValidator.ts` for validation rules.
 
 ## Error Handling
 
-- Global error handling middleware is implemented to catch and log errors, returning a 500 status code for internal server errors.
+- Global error handling middleware catches and logs errors, returning a `500` status code for internal errors.
+
+---
 
 ## Project Structure
 
-
 ```
 TamimOverFlow/
-├── src/                   # Source code
+├── src/
 │   ├── controllers/       # API controllers
-│   ├── middlewares/      # Express middlewares (auth, validation)
-│   ├── routes/           # API routes
-│   ├── services/        # Business logic services
-│   ├── types/            # Type definitions (entities, API responses)
-│   ├── utils/           # Utility functions (Firestore, Redis, JWT)
-│   ├── index.ts         # Main application entry point
-│   ├── createAdmin.ts   # Script to create an admin user
-│   └── constants/       # categories list
+│   ├── middlewares/       # Express middlewares (auth, validation)
+│   ├── routes/            # API routes
+│   ├── services/          # Business logic services
+│   ├── types/             # Type definitions
+│   ├── utils/             # Utility functions (Firestore, Redis, JWT)
+│   ├── index.ts           # Main application entry point
+│   ├── createAdmin.ts     # Script to create an admin user
+│   └── constants/         # Categories list
 ├── .env                   # Environment variables
 └── README.md              # Project documentation
 ```
-There is also the editorconfig file for the code style and the tsconfig file for the typescript configuration aswell as a gitingnore file to ignore the node_modules and the dist folder.
+
+---
 
 ## Technologies Used
 
-- Node.js
-- Express
-- Firebase Firestore
-- Redis
-- JSON Web Tokens (JWT)
-- express-validator
-- Cors
-- Morgan
-- TypeScript
-- dotenv
+- **Node.js**
+- **Express**
+- **Firebase Firestore**
+- **Redis**
+- **JSON Web Tokens (JWT)**
+- **express-validator**
+- **Cors**
+- **Morgan**
+- **TypeScript**
+- **dotenv**
 
+---
 
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
 
-Please also check my Portfolio : tamimg-portfolio.web.app
+Check out my [Portfolio](https://tamimg-portfolio.web.app) for more projects.
+
+---
 
 ## License
 
-Tamim License (just kidding)
-```
+Licensed under Tamim License *(just kidding)*
 
+---
