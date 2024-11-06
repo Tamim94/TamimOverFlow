@@ -79,7 +79,7 @@ ADMIN_PASSWORD=<admin-password> (optional)
 
 
 ## API Endpoints
-By the way remember to put http://localhost:8080/ or whatever you put in the env settings before the endpoints!!!!
+By the way remember to put http://localhost:8080/ or whatever port you put in the env settings before the endpoints!!!!
 
 ### Users
 
