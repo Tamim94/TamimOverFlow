@@ -49,7 +49,7 @@ This project provides a backend API built with Node.js and Express for managing 
 1. Clone the repository: `git clone https://github.com/Tamim94/TamimOverFlow.git`
 2. Navigate to the project directory: `cd TamimOverFlow`
 3. Install dependencies: `npm install`
-3. sudo service redis-server start and then redis-cli to check if the server is running if skip this on windows or macos you will get an error when you run the nodejs server
+3. sudo service redis-server start and then redis-cli to check if the server is running if you skip this on windows or macos you will get an error when you run the nodejs server
 4. Start the development server: `npm run dev`
 
 ### Configuration
