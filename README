@@ -1,4 +1,4 @@
-```markdown
+
 # TamimOverFlow - Backend API
 
 This project provides a backend API built with Node.js and Express for managing users, posts, and comments. It leverages Firebase Firestore for data persistence and Redis for caching.  It supports functionalities like creating users, posting content, commenting, and upvoting/downvoting posts and comments.
